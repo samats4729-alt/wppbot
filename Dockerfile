@@ -41,6 +41,7 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     wget \
     chromium \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Set env to use installed chromium
