@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+
+# WhatsApp Session Data (LocalAuth)
+.wwebjs_auth/
+.wwebjs_cache/
+session-new/
+auth_info/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project specific
+# (Optional: if you want to keep data on server start, don't ignore these, 
+# but for a "clean" repo it's often better to ignore or use volume)
+# leads_salons.json
+# broadcast_state.json
