@@ -214,9 +214,6 @@ client.on('message', async msg => {
 
 const TelegramBot = require('node-telegram-bot-api');
 
-const fs = require('fs');
-const path = require('path');
-
 // --- CAMPAIGN MANAGER ---
 const STATE_FILE = path.join(__dirname, 'broadcast_state.json');
 const LEADS_FILE = path.join(__dirname, 'leads_salons.json');
