@@ -20,6 +20,9 @@ const client = new Client({
 client.on('qr', (qr) => {
     qrcode.generate(qr, { small: true });
     console.log('QR RECEIVED. Scan it with your phone!');
+    console.log('>>> RAW QR STRING BELOW (Copy this if the image is broken):');
+    console.log(qr);
+    console.log('<<< END ROW QR STRING');
 });
 
 let isWhatsappReady = false;
