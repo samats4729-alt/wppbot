@@ -91,7 +91,11 @@ client.on('message', async msg => {
         console.log(`Sender Contact Number: +${senderNumber}`);
 
         // Simulate typing (shows "typing..." status)
-        await chat.sendStateTyping();
+        try {
+            await chat.sendStateTyping();
+        } catch (e) {
+            console.log('Typing status failed (ignoring):', e.message);
+        }
 
         // Fetch last 10 messages for context (history)
         // We fetch a bit more to ensure we have context, then map them
@@ -156,8 +160,10 @@ client.on('message', async msg => {
         }
 
         // Send reply WITHOUT quoting (regular message)
-        await client.sendMessage(msg.from, reply);
-        console.log(`Replied: ${reply}`);
+        // FIX: Use standard ID (@c.us) instead of msg.from (@lid) to avoid 'markedUnread' errors
+        const targetId = senderNumber + '@c.us';
+        await client.sendMessage(targetId, reply);
+        console.log(`Replied to ${targetId}: ${reply}`);
 
     } catch (error) {
         console.error('Error generating response:', error);
