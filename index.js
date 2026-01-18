@@ -160,6 +160,7 @@ client.on('message', async msg => {
                     "2. КРАТКОСТЬ: 1-2 предложения.\n" +
                     "3. ДЕТЕКТОР БОТОВ (КРИТИЧНО ЗАДАНИЕ): Проанализируй сообщение собеседника.\n" +
                     "   - Если собеседник ведет себя как БОТ или МЕНЕДЖЕР (предлагает свои услуги, просит записаться к ним, спрашивает 'Вы хотите записаться?', присылает прайс-лист салона) -> ТЫ ДОЛЖЕН ОТВЕТИТЬ ТОЛЬКО ОДНИМ СЛОВОМ: [IGNORE]\n" +
+                    "   - ОБЯЗАТЕЛЬНО ОТВЕЧАЙ, если это простое приветствие ('Привет', 'Добрый день') или вопрос клиента.\n" +
                     "   - Мы не пытаемся продать боту. Если это автоответчик — мы молчим.\n" +
                     "4. ТОН: Дружелюбный, но деловой. Обращайся на 'Вы'.\n" +
                     "\n" +
@@ -204,8 +205,18 @@ client.on('message', async msg => {
         // Send reply WITHOUT quoting (regular message)
         // FIX: Use standard ID (@c.us) instead of msg.from (@lid) to avoid 'markedUnread' errors
         const targetId = senderNumber + '@c.us';
-        await client.sendMessage(targetId, reply);
-        console.log(`Replied to ${targetId}: ${reply}`);
+
+        try {
+            await client.sendMessage(targetId, reply);
+            console.log(`Replied to ${targetId}: ${reply}`);
+        } catch (sendError) {
+            console.error(`Error sending message to ${targetId}:`, sendError.message);
+            // If it's the specific "markedUnread" error, it actually often means the message SENT but client crashed post-send.
+            // We swallow it to prevent Main Loop crash.
+            if (sendError.message && sendError.message.includes('markedUnread')) {
+                console.log('⚠️ Ignored known "markedUnread" error (Message likely sent).');
+            }
+        }
 
     } catch (error) {
         console.error('Error generating response:', error);
