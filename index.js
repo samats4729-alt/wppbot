@@ -82,14 +82,7 @@ client.on('disconnected', (reason) => {
     // client.initialize(); // Optional: Auto-reconnect logic could go here, but usually a restart is safer for now.
 });
 
-// --- LOOP PROTECTION ---
-const messageCounters = new Map();
-// Reset counters every 24 hours
-setInterval(() => {
-    messageCounters.clear();
-    console.log('🧹 Message counters cleared (Daily Reset).');
-}, 24 * 60 * 60 * 1000);
-// -----------------------
+// Loop protection (counters) removed per user request
 
 client.on('message', async msg => {
     console.log('DEBUG: Message received full object:', { from: msg.from, body: msg.body, type: msg.type });
@@ -100,25 +93,7 @@ client.on('message', async msg => {
     // Ignore empty messages or non-chat types
     if (!msg.body || msg.type !== 'chat') return;
 
-    // --- LOOP / SPAM CHECK ---
-    const contact = await msg.getContact();
-    const senderNumber = contact.number || contact.id.user;
-
-    // Increment counter
-    const currentCount = (messageCounters.get(senderNumber) || 0) + 1;
-    messageCounters.set(senderNumber, currentCount);
-
-    if (currentCount > 10) {
-        console.log(`⛔ Loop protection: Ignoring ${senderNumber} (Message #${currentCount})`);
-        return; // Silent ignore after limit
-    }
-
-    if (currentCount === 10) {
-        // Send final "Stop" message
-        await client.sendMessage(msg.from, "Это ИИ-ассистент. Вижу, у нас длинная переписка. Давайте лучше созвонимся? Мой руководитель свяжется с Вами лично.");
-        return;
-    }
-    // -------------------------
+    // Loop/Spam check removed - relying on AI context detection.
 
     // Log incoming message
     console.log(`Received message from ${msg.from}: ${msg.body}`);
