@@ -51,7 +51,7 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-RUN rm -f package-lock.json && npm install
+RUN npm install
 
 COPY . .
 
