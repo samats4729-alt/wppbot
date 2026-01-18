@@ -53,6 +53,9 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 
+COPY patch-client.js .
+RUN node patch-client.js
+
 COPY . .
 
 CMD [ "node", "index.js" ]
