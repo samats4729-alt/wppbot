@@ -1,7 +1,40 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const OpenAI = require('openai');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
+
+// --- FIX: REMOVE LOCK FILES BEFORE START ---
+// Railway/Docker often leaves "SingletonLock" files if the container crashes.
+// We must remove them to avoid "Profile in use" errors.
+function removeSessionLocks() {
+    const sessionDir = path.join(__dirname, '.wwebjs_auth');
+    if (!fs.existsSync(sessionDir)) return;
+
+    // Recursive function to walk directories
+    function cleanLinks(dir) {
+        try {
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+                const curPath = path.join(dir, file);
+                if (fs.lstatSync(curPath).isDirectory()) {
+                    cleanLinks(curPath);
+                } else {
+                    if (file === 'SingletonLock') {
+                        console.log(`🔒 Removing lock file: ${curPath}`);
+                        fs.unlinkSync(curPath);
+                    }
+                }
+            }
+        } catch (e) {
+            // Ignore errors (permission/not found)
+        }
+    }
+    cleanLinks(sessionDir);
+}
+removeSessionLocks();
+// -------------------------------------------
 
 // Initialize DeepSeek (using OpenAI SDK compatibility)
 const openai = new OpenAI({
@@ -13,7 +46,16 @@ const openai = new OpenAI({
 const client = new Client({
     authStrategy: new LocalAuth({ clientId: 'session-new' }),
     puppeteer: {
-        args: ['--no-sandbox']
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu'
+        ]
     }
 });
 
