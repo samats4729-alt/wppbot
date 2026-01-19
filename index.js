@@ -225,7 +225,13 @@ class CampaignManager {
 
     getLeads() {
         if (!fs.existsSync(LEADS_FILE)) return [];
-        return JSON.parse(fs.readFileSync(LEADS_FILE, 'utf8'));
+        try {
+            return JSON.parse(fs.readFileSync(LEADS_FILE, 'utf8'));
+        } catch (err) {
+            console.error('❌ ERROR: Failed to parse leads_salons.json:', err.message);
+            console.error('   The file may be corrupted. Returning empty array.');
+            return [];
+        }
     }
 
     checkDailyReset() {

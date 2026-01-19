@@ -21,7 +21,5 @@ yarn-error.log*
 Thumbs.db
 
 # Project specific
-# (Optional: if you want to keep data on server start, don't ignore these, 
-# but for a "clean" repo it's often better to ignore or use volume)
-# leads_salons.json
-# broadcast_state.json
+# State file must be ignored so it persists on Railway volume between deploys
+broadcast_state.json
